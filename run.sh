@@ -1,5 +1,4 @@
 #!/bin/bash
 set -e
-
-cd src
-go run main.go
+docker-compose build
+docker-compose up -d

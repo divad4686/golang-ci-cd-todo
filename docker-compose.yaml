@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  todo:
+    image: todo.cicd
+    build:
+      context: ./todoapp
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+        

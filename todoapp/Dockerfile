@@ -1,11 +1,11 @@
-FROM golang:1.12-alpine AS build_base
-
-RUN apk add --no-cache git
+FROM golang:1.14 AS build_base
 
 # Set the Current Working Directory inside the container
 WORKDIR /code
 
 # We want to populate the module cache based on the go.{mod,sum} files.
+
+
 COPY go.mod .
 COPY go.sum .
 
@@ -14,14 +14,13 @@ RUN go mod download
 COPY . .
 
 # Unit tests
-RUN CGO_ENABLED=0 go test -v
+RUN go test -v
 
 # Build the Go app
 RUN go build -o /output/todo .
 
 # Start fresh from a smaller image
-FROM alpine:3.9 
-RUN apk add ca-certificates
+FROM ubuntu:18.04
 
 COPY --from=build_base /output/todo /app/todo
 

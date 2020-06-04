@@ -1,0 +1,54 @@
+{{- $fullName := include "lidlpay.fullname" . -}}
+{{- $name := include "lidlpay.name" . -}}
+{{- $chart := include "lidlpay.chart" . -}}
+{{- $releaseName := .Release.Name -}}
+{{- $releaseService := .Release.Service -}}
+{{- $imageRegistry := .Values.imageRegistry }}
+{{- $imageTag := .Values.imageTag }}
+{{- $configurations := .Values.configurations }}
+{{- $secrets := .Values.secrets}}
+{{- $imagePullSecret := .Values.imagePullSecret }}
+
+{{- range .Values.jobs }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-%s" $fullName .name }}
+  labels:
+    app.kubernetes.io/name: {{ $name }}
+    helm.sh/chart: {{ $chart }}
+    app.kubernetes.io/instance: {{ $releaseName }}
+    app.kubernetes.io/managed-by: {{ $releaseService }}
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ printf "%s-%s" $name .name }}
+        app.kubernetes.io/instance: {{ $releaseName }}
+    spec:
+      restartPolicy: OnFailure 
+      imagePullSecrets:
+        - name: {{ $imagePullSecret }}
+      containers:
+      - name: {{ .name }}
+        image: "{{ printf "%s/%s:%s" $imageRegistry .image $imageTag }}"
+        env:
+          {{- range $key, $value := $configurations }}
+          - name: {{ $key }}
+            value: "{{ $value }}"
+          {{- end }}
+          {{- range $key := $secrets }}
+          - name: {{ $key }}
+            valueFrom:
+              secretKeyRef:
+                name: "{{ printf "%s-secrets" $fullName }}"
+                key: {{ $key}}
+          {{- end }}
+        command: ["sh", "-c", "{{ .command }}"]
+
+---
+{{- end }}

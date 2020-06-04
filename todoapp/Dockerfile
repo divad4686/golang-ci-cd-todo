@@ -24,8 +24,5 @@ FROM ubuntu:18.04
 
 COPY --from=build_base /output/todo /app/todo
 
-# This container exposes port 8080 to the outside world
-EXPOSE 8080
-
 # Run the binary program produced by `go install`
 CMD ["/app/todo"]

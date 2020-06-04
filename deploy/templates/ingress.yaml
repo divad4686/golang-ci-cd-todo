@@ -1,0 +1,53 @@
+{{- $fullName := include "lidlpay.fullname" . -}}
+{{- $name := include "lidlpay.name" . -}}
+{{- $chart := include "lidlpay.chart" . -}}
+{{- $releaseName := .Release.Name -}}
+{{- $releaseService := .Release.Service -}}
+{{- $environment := .Values.configurations.ASPNETCORE_ENVIRONMENT -}}
+{{- $host := .Values.configurations.host}}
+
+{{- range .Values.services }}
+{{- $serviceName := .name -}}
+{{- if .ingress }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ printf "%s-%s" $fullName $serviceName }}
+  labels:
+    app.kubernetes.io/name: {{ $name }}
+    helm.sh/chart: {{ $chart }}
+    app.kubernetes.io/instance: {{ $releaseName }}
+    app.kubernetes.io/managed-by: {{ $releaseService }}
+  {{- if .ingress.annotations }}
+  {{- with .ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+spec:
+{{- if .ingress.tls }}
+  tls:
+  {{- range .ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . | quote }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+  {{- range .ingress.hosts }}
+    {{- $hostData := dict "Host" $host "Environment" $environment }}
+    - host: {{ $host | quote }}
+      http:
+        paths:
+        {{- range .paths }}
+          - path: {{ . | quote }}
+            backend:
+              serviceName: {{ printf "%s-%s" $fullName $serviceName }}
+              servicePort: http
+        {{- end }}
+  {{- end }}
+{{- end }}
+---
+{{- end }}

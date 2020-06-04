@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "todoapp",
+			"path": "todoapp"
+		},
+		{
+			"name": "golang-ci-cd-todo",
+			"path": "."
+		}
+	],
+	"settings": {}
+}

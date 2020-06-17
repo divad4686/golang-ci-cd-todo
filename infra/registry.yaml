@@ -1,0 +1,6 @@
+ingress:
+  enabled: true
+  hosts:
+    - "docker-registry.default"
+  annotations:
+    "nginx.ingress.kubernetes.io/proxy-body-size": "0"

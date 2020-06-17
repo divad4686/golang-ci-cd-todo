@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   todo:
-    image: todo.cicd
+    image: ${REGISTRY:-local}/todo.cicd:${TAG:-latest}
     build:
       context: ./todoapp
       dockerfile: Dockerfile

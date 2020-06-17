@@ -1,10 +1,9 @@
-{{- $fullName := include "lidlpay.fullname" . -}}
-{{- $name := include "lidlpay.name" . -}}
-{{- $chart := include "lidlpay.chart" . -}}
+{{- $fullName := include "fullname" . -}}
+{{- $name := include "name" . -}}
+{{- $chart := include "chart" . -}}
 {{- $releaseName := .Release.Name -}}
 {{- $releaseService := .Release.Service -}}
-{{- $environment := .Values.configurations.ASPNETCORE_ENVIRONMENT -}}
-{{- $host := .Values.configurations.host}}
+{{- $environment := .Values.environment -}}
 
 {{- range .Values.services }}
 {{- $serviceName := .name -}}
@@ -36,13 +35,12 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-  {{- range .ingress.hosts }}
-    {{- $hostData := dict "Host" $host "Environment" $environment }}
-    - host: {{ $host | quote }}
+  {{- range .ingress.hosts }}    
+    - host: {{ .host | quote }}
       http:
         paths:
         {{- range .paths }}
-          - path: {{ . | quote }}
+          - path: {{ printf "/%s%s" $environment .  }}
             backend:
               serviceName: {{ printf "%s-%s" $fullName $serviceName }}
               servicePort: http

@@ -1,13 +1,10 @@
-{{- $fullName := include "lidlpay.fullname" . -}}
-{{- $name := include "lidlpay.name" . -}}
-{{- $chart := include "lidlpay.chart" . -}}
+{{- $fullName := include "fullname" . -}}
+{{- $name := include "name" . -}}
+{{- $chart := include "chart" . -}}
 {{- $releaseName := .Release.Name -}}
 {{- $releaseService := .Release.Service -}}
 {{- $imageRegistry := .Values.imageRegistry }}
 {{- $imageTag := .Values.imageTag }}
-{{- $imagePullSecret := .Values.imagePullSecret }}
-{{- $configurations := .Values.configurations }}
-{{- $secrets := .Values.secrets}}
 
 {{- range .Values.deployments }}
 apiVersion: apps/v1
@@ -30,19 +27,17 @@ spec:
       labels:
         app.kubernetes.io/name: {{ printf "%s-%s" $name .name }}
         app.kubernetes.io/instance: {{ $releaseName }}
-    spec:
-      imagePullSecrets:
-        - name: {{ $imagePullSecret }}
+    spec:      
       containers:
         - name: {{ .name }}
           image: "{{ printf "%s/%s:%s" $imageRegistry .image $imageTag }}"
           imagePullPolicy: {{ .pullPolicy | default "IfNotPresent" }}
           env:
-            {{- range $key, $value := $configurations }}
+            {{- range $key, $value := .environment }}
             - name: {{ $key }}
               value: "{{ $value }}"
             {{- end }}
-            {{- range $key := $secrets }}
+            {{- range $key := .secrets }}
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:

@@ -1,6 +1,6 @@
-{{- $fullName := include "lidlpay.fullname" . -}}
-{{- $name := include "lidlpay.name" . -}}
-{{- $chart := include "lidlpay.chart" . -}}
+{{- $fullName := include "fullname" . -}}
+{{- $name := include "name" . -}}
+{{- $chart := include "chart" . -}}
 {{- $releaseName := .Release.Name -}}
 {{- $releaseService := .Release.Service -}}
 {{- $imageRegistry := .Values.imageRegistry }}

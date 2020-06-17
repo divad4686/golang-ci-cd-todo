@@ -1,0 +1,32 @@
+deployments:
+  todo-api:
+    name: todo-api
+    replicaCount: 1
+    image: todo.cicd
+    resources:
+      limits:
+        memory: 600Mi 
+        cpu: 1
+      requests:
+        memory: 300Mi 
+        cpu: 0.1
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    environment:
+      PORT: 80
+    
+services:
+  todo-api:
+    name: todo-api    
+    ports:
+    - name: 80
+      port: 80
+    monitoring: true
+    ingress:
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+      hosts:
+        - host: "cicdexample.com"
+          paths: 
+            - "/todoapi(/|$)(.*)"    

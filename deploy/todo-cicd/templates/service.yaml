@@ -1,6 +1,6 @@
-{{- $fullName := include "lidlpay.fullname" . -}}
-{{- $name := include "lidlpay.name" . -}}
-{{- $chart := include "lidlpay.chart" . -}}
+{{- $fullName := include "fullname" . -}}
+{{- $name := include "name" . -}}
+{{- $chart := include "chart" . -}}
 {{- $releaseName := .Release.Name -}}
 {{- $releaseService := .Release.Service -}}
 {{- $namespace := .Values.namespace -}}
@@ -26,22 +26,5 @@ spec:
   selector:
     app.kubernetes.io/name: {{ printf "%s-%s" $name .name }}
     app.kubernetes.io/instance: {{ $releaseName }}
----
-{{- if ( .monitoring ) and eq .monitoring true }}
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: {{ printf "%s-monitor" .name}}
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/service: {{ .name }}
-  namespaceSelector:
-    matchNames:
-    - {{ $namespace }}
-  endpoints:
-  - port: http
-    path: /metrics
-{{- end }}
 ---
 {{- end }}

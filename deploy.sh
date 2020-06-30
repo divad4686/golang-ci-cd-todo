@@ -5,9 +5,9 @@ export TAG="epoch-$(date +%s)"
 echo "Registry: $REGISTRY"
 echo "Tag: $TAG"
 
-docker-compose build
-docker-compose push
+docker-compose -f docker-compose.services.yaml build
+docker-compose -f docker-compose.services.yaml push
 
-# pushd deploy
-# ./deploy.sh
-# popd
+pushd deploy
+./deploy.sh
+popd

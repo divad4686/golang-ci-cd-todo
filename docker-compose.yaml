@@ -1,9 +1,15 @@
 version: "3.8"
 services:
-  todo:
-    image: ${REGISTRY:-local}/todo.cicd:${TAG:-latest}
-    build:
-      context: ./todoapp
-      dockerfile: Dockerfile
+  db:
+    image: postgres
+    environment:
+      - "POSTGRES_PASSWORD=mypassword"
     ports:
-      - 8080:8080
+      - 5432:5432
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://db/ -schemas=todo -user=postgres -password=mypassword -connectRetries=60 migrate
+    volumes:
+      - ./migrations:/flyway/sql
+    depends_on:
+      - db

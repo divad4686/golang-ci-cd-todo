@@ -18,7 +18,7 @@ deployments:
     
 services:
   todo-api:
-    name: todo-api    
+    name: todo-api
     ports:
     - name: 80
       port: 80
@@ -29,4 +29,4 @@ services:
       hosts:
         - host: "cicdexample.com"
           paths: 
-            - "/todoapi(/|$)(.*)"    
+            - "/todoapi(/|$)(.*)"

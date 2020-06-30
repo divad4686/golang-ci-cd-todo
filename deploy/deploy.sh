@@ -1,6 +1,6 @@
 #!/bin/bash
-REGISTRY=docker-registry.default
-TAG=epoch-1592389230
+# REGISTRY=docker-registry.default
+# TAG=epoch-1592389230
 
 environment=${ENVIRONMENT:-'staging'}
 

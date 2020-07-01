@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# host="http://cicdexample.com/staging/todoapi"
-host="localhost:8080"
+host="http://cicdexample.com/staging/todoapi"
+# host="localhost:8080"
 
 curl $host/ping
 echo ""

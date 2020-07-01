@@ -9,6 +9,8 @@ deploy=$chart-$environment
 namespace=$chart-$environment
 
 kubectl create namespace $namespace
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
 helm dep update $chart
 
 
@@ -22,4 +24,5 @@ helm upgrade --install \
   --debug \
   $chart \
   -f $chart/values.yaml \
+  -f $chart/values.$environment.yaml \
   --wait

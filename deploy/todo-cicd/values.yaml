@@ -14,7 +14,31 @@ deployments:
     tolerations: []
     affinity: {}
     environment:
-      PORT: 80
+      PORT: 80   
+      DATABASE_URL: "postgres://postgres:mypassword@todo-cicd-staging-postgresql:5432/postgres?pool_max_conns=10&currentSchema=todo"
+
+jobs:
+  myflyway:
+    name: myflyway
+    replicaCount: 1
+    image: myflyway
+    resources:
+      limits:
+        memory: 600Mi 
+        cpu: 1
+      requests:
+        memory: 300Mi 
+        cpu: 0.1
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    environment:      
+      FLYWAY_SCHEMAS: "todo"
+      FLYWAY_DEFAULT_SCHEMA: "todo"
+      FLYWAY_USER: "postgres"
+      FLYWAY_PASSWORD: "mypassword"
+      FLYWAY_CONNECT_RETRIES: 60
+
     
 services:
   todo-api:
@@ -30,3 +54,7 @@ services:
         - host: "cicdexample.com"
           paths: 
             - "/todoapi(/|$)(.*)"
+
+postgresql:
+  postgresqlPassword: mypassword
+  postgresqlDatabase: postgres

@@ -6,10 +6,14 @@ services:
       - "POSTGRES_PASSWORD=mypassword"
     ports:
       - 5432:5432
-  flyway:
-    image: flyway/flyway
-    command: -url=jdbc:postgresql://db/ -schemas=todo -user=postgres -password=mypassword -connectRetries=60 migrate
-    volumes:
-      - ./migrations:/flyway/sql
+  myflyway:
     depends_on:
       - db
+    environment:
+      - "FLYWAY_URL=jdbc:postgresql://db/"
+      - "FLYWAY_SCHEMAS=todo"
+      - "FLYWAY_DEFAULT_SCHEMA=todo"
+      - "FLYWAY_USER=postgres"
+      - "FLYWAY_PASSWORD=mypassword"
+      - "FLYWAY_CONNECT_RETRIES=60"
+# command: -url=jdbc:postgresql://db/ -schemas=todo -user=postgres -password=mypassword -connectRetries=60 migrate

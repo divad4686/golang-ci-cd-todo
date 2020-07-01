@@ -5,9 +5,6 @@
 {{- $releaseService := .Release.Service -}}
 {{- $imageRegistry := .Values.imageRegistry }}
 {{- $imageTag := .Values.imageTag }}
-{{- $configurations := .Values.configurations }}
-{{- $secrets := .Values.secrets}}
-{{- $imagePullSecret := .Values.imagePullSecret }}
 
 {{- range .Values.jobs }}
 apiVersion: batch/v1
@@ -30,23 +27,21 @@ spec:
         app.kubernetes.io/name: {{ printf "%s-%s" $name .name }}
         app.kubernetes.io/instance: {{ $releaseName }}
     spec:
-      restartPolicy: OnFailure 
-      imagePullSecrets:
-        - name: {{ $imagePullSecret }}
+      restartPolicy: OnFailure       
       containers:
       - name: {{ .name }}
         image: "{{ printf "%s/%s:%s" $imageRegistry .image $imageTag }}"
         env:
-          {{- range $key, $value := $configurations }}
-          - name: {{ $key }}
-            value: "{{ $value }}"
+          {{- range $key, $value := .environment }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
           {{- end }}
-          {{- range $key := $secrets }}
-          - name: {{ $key }}
-            valueFrom:
-              secretKeyRef:
-                name: "{{ printf "%s-secrets" $fullName }}"
-                key: {{ $key}}
+          {{- range $key := .secrets }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ printf "%s-secrets" $fullName }}"
+                  key: {{ $key}}
           {{- end }}
         command: ["sh", "-c", "{{ .command }}"]
 

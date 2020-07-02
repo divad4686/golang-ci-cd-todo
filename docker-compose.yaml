@@ -16,4 +16,3 @@ services:
       - "FLYWAY_USER=postgres"
       - "FLYWAY_PASSWORD=mypassword"
       - "FLYWAY_CONNECT_RETRIES=60"
-# command: -url=jdbc:postgresql://db/ -schemas=todo -user=postgres -password=mypassword -connectRetries=60 migrate

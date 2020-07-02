@@ -6,11 +6,17 @@ host="http://cicdexample.com/staging/todoapi"
 
 curl $host/ping
 echo ""
-curl $host/todos \
+result=$(curl $host/todos \
   -H  "accept: application/json" \
   -H  "Content-Type: application/json" \
   -d '{
       "Title":"comprar",
       "Text":"comprar cosas",
       "Completed":false
-    }'
+    }')
+
+echo $result
+
+url=$(jq -r '.url' <<< $result)
+
+curl $url

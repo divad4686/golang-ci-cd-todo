@@ -1,0 +1,13 @@
+pool: "docker"
+
+variables:
+  tag: "$(build.sourceVersion)"
+
+steps:
+  - bash: ./deploy.sh
+    displayName: "Install staging in k8s"
+    workingDirectory: deploy
+    env:
+      ENVIRONMENT: staging
+      REGISTRY: $(azure.containers.registry)
+      TAG: $(tag)

@@ -21,7 +21,6 @@ type todoItem struct {
 	Title     string `json:"title"`
 	URL       string `json:"url"`
 	Completed bool   `json:"completed"`
-	Order     int    `json:"order"`
 	Text      string `json:"text"`
 }
 
@@ -46,18 +45,34 @@ func main() {
 		})
 	})
 
+	r.GET("/todos/:itemid", func(c *gin.Context) {
+		itemid := c.Param("itemid")
+		item, err := query(itemid)
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
+		c.JSON(200, item)
+	})
+
 	r.POST("/todos", func(c *gin.Context) {
 		item := todoItem{}
 		if err := c.Bind(&item); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		}
 
+		host, ok := os.LookupEnv("HOST")
+		if !ok {
+			host = "http://localhost:8080"
+		}
+
 		item.ID = uuid.New().String()
-		item.URL = "http://cicdexample.com/staging/todoapi/todos/" + item.ID
+		item.URL = host + "/todos/" + item.ID
 
 		err := insert(item)
 		if err != nil {
-			c.JSON(500, err)
+			c.String(500, err.Error())
+			return
 		}
 		c.JSON(201, item)
 	})
@@ -65,10 +80,33 @@ func main() {
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
+func query(itemid string) (todoItem, error) {
+	conn, ok := os.LookupEnv("DATABASE_URL")
+	if !ok {
+		conn = "postgres://postgres:mypassword@localhost:5432/postgres?pool_max_conns=10"
+	}
+
+	dbpool, err := pgxpool.Connect(context.Background(), conn)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		return todoItem{}, err
+	}
+
+	item := todoItem{}
+	err = dbpool.QueryRow(context.Background(), "select id,title,url,completed,text from todo.todo where id=$1", itemid).Scan(&item.ID, &item.Title, &item.URL, &item.Completed, &item.Text)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to query todo: %v\n", err)
+		return todoItem{}, err
+	}
+
+	return item, nil
+}
+
 func insert(item todoItem) error {
 	conn, ok := os.LookupEnv("DATABASE_URL")
 	if !ok {
-		conn = "postgres://postgres:mypassword@localhost:5432/postgres?pool_max_conns=10&currentSchema=todo"
+		conn = "postgres://postgres:mypassword@localhost:5432/postgres?pool_max_conns=10"
 	}
 
 	dbpool, err := pgxpool.Connect(context.Background(), conn)
@@ -80,7 +118,7 @@ func insert(item todoItem) error {
 
 	defer dbpool.Close()
 
-	_, err = dbpool.Exec(context.Background(), "insert into todo values($1,$2,$3,$4,$5,$6)", item.ID, item.Title, item.URL, item.Completed, item.Order, item.Text)
+	_, err = dbpool.Exec(context.Background(), "insert into todo.todo values($1,$2,$3,$4,$5)", item.ID, item.Title, item.URL, item.Completed, item.Text)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to insert todo: %v\n", err)

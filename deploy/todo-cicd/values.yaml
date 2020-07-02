@@ -14,8 +14,7 @@ deployments:
     tolerations: []
     affinity: {}
     environment:
-      PORT: 80   
-      DATABASE_URL: "postgres://postgres:mypassword@todo-cicd-staging-postgresql:5432/postgres?pool_max_conns=10&currentSchema=todo"
+      PORT: 80
 
 jobs:
   myflyway:
@@ -31,7 +30,7 @@ jobs:
         cpu: 0.1
     nodeSelector: {}
     tolerations: []
-    affinity: {}
+    affinity: {}    
     environment:      
       FLYWAY_SCHEMAS: "todo"
       FLYWAY_DEFAULT_SCHEMA: "todo"

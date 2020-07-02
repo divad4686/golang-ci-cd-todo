@@ -1,7 +1,8 @@
 deployments:
   todo-api:
     environment:
-      DATABASE_URL: "postgres://postgres:mypassword@todo-cicd-staging-postgresql:5432/postgres?pool_max_conns=10&currentSchema=todo"
+      DATABASE_URL: "postgres://postgres:mypassword@todo-cicd-staging-postgresql:5432/postgres?pool_max_conns=10"
+      HOST: "http://cicdexample.com/staging/todoapi"
 
 jobs:
   myflyway:

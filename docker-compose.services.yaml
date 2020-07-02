@@ -8,7 +8,8 @@ services:
     ports:
       - 8080:8080
     environment:
-      - "DATABASE_URL=postgres://postgres:mypassword@localhost:5432/postgres?pool_max_conns=10&currentSchema=todo"
+      - "DATABASE_URL=postgres://postgres:mypassword@db:5432/postgres?pool_max_conns=10"
+      - "HOST=http://localhost:8080"
 
   myflyway:
     image: ${REGISTRY:-local}/myflyway:${TAG:-latest}

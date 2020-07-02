@@ -5,6 +5,7 @@ host="http://cicdexample.com/staging/todoapi"
 # host="localhost:8080"
 
 curl $host/ping
+
 echo ""
 result=$(curl $host/todos \
   -H  "accept: application/json" \

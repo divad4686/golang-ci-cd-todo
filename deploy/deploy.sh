@@ -2,7 +2,7 @@
 # REGISTRY=docker-registry.default
 # TAG=epoch-1592389230
 
-environment=${ENVIRONMENT:-'david'}
+environment=${ENVIRONMENT:-'staging'}
 
 chart='todo-cicd'
 deploy=$chart-$environment

@@ -33,7 +33,7 @@ func TestApi(t *testing.T) {
 	item := todoItemSend{
 		Title:     "List",
 		Completed: false,
-		Text:      "hacer cosas",
+		Text:      "buy a car",
 	}
 
 	host, ok := os.LookupEnv("HOST")
@@ -58,6 +58,7 @@ func TestApi(t *testing.T) {
 	result := todoItemResponse{}
 	json.NewDecoder(resp.Body).Decode(&result)
 
+	// TODO: Coonnect to database and check item was inserted correctly
 	if result.URL == "" {
 		t.Error("Imcomplete response")
 	}
@@ -70,7 +71,7 @@ func TestApi(t *testing.T) {
 	getresult := todoItemResponse{}
 	json.NewDecoder(resp.Body).Decode(&getresult)
 
-	if getresult.Title != result.Title || getresult.Completed != result.Completed {
+	if getresult.Title != result.Title || getresult.Completed != result.Completed || getresult.Text != result.Text {
 		t.Error("Different result")
 	}
 }

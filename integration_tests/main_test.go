@@ -56,7 +56,11 @@ func TestApi(t *testing.T) {
 	defer resp.Body.Close()
 
 	result := todoItemResponse{}
-	json.NewDecoder(resp.Body).Decode(&result)
+	err = json.NewDecoder(resp.Body).Decode(&result)
+
+	if err != nil {
+		t.Error(err.Error())
+	}
 
 	// TODO: Coonnect to database and check item was inserted correctly
 	if result.URL == "" {
@@ -69,7 +73,11 @@ func TestApi(t *testing.T) {
 	}
 
 	getresult := todoItemResponse{}
-	json.NewDecoder(resp.Body).Decode(&getresult)
+	err = json.NewDecoder(resp.Body).Decode(&getresult)
+
+	if err != nil {
+		t.Error(err.Error())
+	}
 
 	if getresult.Title != result.Title || getresult.Completed != result.Completed || getresult.Text != result.Text {
 		t.Error("Different result")
